@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # Web service for the main application
+  yourregno-web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - yourregno-db
+
+  # Database service
+  yourregno-db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: myregnumber_shareride_db
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  # PHPMyAdmin service for database management
+  yourregno-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: yourregno-db
+      MYSQL_ROOT_PASSWORD: rootpassword
+    depends_on:
+      - yourregno-db
+
+volumes:
+  db_data:
